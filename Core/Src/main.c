@@ -23,10 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <string>
+#include "UserApp/userApp.h"
 
 /* USER CODE END Includes */
 
@@ -92,18 +89,16 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  setup();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    loop();
     /* USER CODE END WHILE */
-    std::string str = "hello c++\r\n";
-    printf("%s", str.c_str());
-    printf("test\r\n");
-    HAL_Delay(1000);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
