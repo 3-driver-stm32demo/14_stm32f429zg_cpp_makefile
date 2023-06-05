@@ -950,7 +950,7 @@ class ICM42688{
 
  protected:
   //Device *port_ = nullptr;
-  port_spi *port_ = nullptr;
+  port_spi port_;
 
   bool WriteMask(uint32_t reg_addr, uint8_t reg_value, uint8_t mask);
 

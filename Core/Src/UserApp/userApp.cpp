@@ -3,6 +3,7 @@
 #include <string>
 #include "UserApp/userApp.h"
 #include "stm32f4xx_hal.h"
+#include "UserApp/DevalIMU.hpp"
 
 double a = 3.1415926f;
 char mychar[100];
@@ -63,15 +64,15 @@ void py_f2s4printf(char * stra, float x, uint8_t flen)
 	}
 }
 
-void setup() {
+deval::IMUService imu_service_;
 
+void setup() {
+	imu_service_.Start();
     printf("run setup\r\n");
 }
 
 void loop() {
-
-    // HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
-    // HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+	imu_service_.Loop();
     std::string str = "hello c++ loop";
     printf("%s\r\n", str.c_str());
     printf("test float printf\r\n");

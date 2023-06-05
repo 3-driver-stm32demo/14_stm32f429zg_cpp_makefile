@@ -31,9 +31,9 @@ bool ICM42688::Init() {
 }
 
 bool ICM42688::Init(bool clkin_enable) {
-  port_->spi_init(SPI5,10000000);
+  port_.spi_init(SPI5,10000000);
   has_inited_ = false;
-  printf("[%d]ICM42688::Start init(), clkin = %d\n", id_, clkin_enable);
+  printf("[%d]ICM42688::Start init(), clkin = %d\r\n", id_, clkin_enable);
   gyro_fsr_ = GYRO_RANGE_2000DPS;
   accel_fsr_ = ACC_RANGE_16G;
   fifo_mode_ = STREAM;
@@ -42,7 +42,7 @@ bool ICM42688::Init(bool clkin_enable) {
   use_hi_res_ = false;
   /////////// Check Who Am I
   uint8_t id = 0;
-  if (!port_->ReadRegister(RegAddrNew::WHO_AM_I, &id)) {
+  if (!port_.ReadRegister(RegAddrNew::WHO_AM_I, &id)) {
     printf("[%d]ICM42688::CheckWhoAmI(): error! cannot read WHO_AM_I id!", id_);
     return false;
   }
@@ -257,7 +257,7 @@ bool ICM42688::Init(bool clkin_enable) {
   HAL_Delay(20);
   // interrput_pin_.SetIRQDelegate(this);
 
-  printf("ICM42688::Start ok!\n");
+  printf("ICM42688::Start ok!\r\n");
   return true;
 }
 
@@ -266,9 +266,9 @@ int ICM42688::DebugInit() { return DebugInit(true); }
 int ICM42688::DebugInit(bool clkin_enable) {
 
   //port_ = DeviceFactory::ShareInstance()->GetSPIDeviceById(id_);
-  port_->spi_init(SPI5,10000000);
+  port_.spi_init(SPI5,10000000);
   has_inited_ = false;
-  printf("ICM42688::Start DebugInit(), clkin = %d\n", clkin_enable);
+  printf("ICM42688::Start DebugInit(), clkin = %d\r\n", clkin_enable);
   gyro_fsr_ = GYRO_RANGE_2000DPS;
   accel_fsr_ = ACC_RANGE_16G;
   fifo_mode_ = STREAM;
@@ -278,12 +278,12 @@ int ICM42688::DebugInit(bool clkin_enable) {
   sync_time_count_ = 0; // reset count to make a tiemstamp sync 
   /////////// Check Who Am I
   uint8_t id = 0;
-  if (!port_->ReadRegister(RegAddrNew::WHO_AM_I, &id)) {
-    printf("[%d]ICM42688::CheckWhoAmI(): error! cannot read WHO_AM_I id!", id_);
+  if (!port_.ReadRegister(RegAddrNew::WHO_AM_I, &id)) {
+    printf("[%d]ICM42688::CheckWhoAmI(): error! cannot read WHO_AM_I id!\r\n", id_);
     return -1;
   }
   if (id != WHO_AM_I_ID) {
-    printf("[%d]ICM42688::CheckWhoAmI(): error! wanted ID: 0x%02X, got: 0x%02X\n", id_, WHO_AM_I_ID, id);
+    printf("[%d]ICM42688::CheckWhoAmI(): error! wanted ID: 0x%02X, got: 0x%02X\r\n", id_, WHO_AM_I_ID, id);
     return -2;
   }
 
@@ -491,14 +491,14 @@ int ICM42688::DebugInit(bool clkin_enable) {
 
   // interrput_pin_.SetIRQDelegate(this);
 
-  printf("ICM42688::Start ok!\n");
+  printf("ICM42688::Start ok!\r\n");
   return 0;
 }
 
 bool ICM42688::Deinit() {
-  if (port_ == nullptr) {
-    return true;
-  }
+  // if (port_ == nullptr) {
+  //   return true;
+  // }
 
   has_inited_ = false;
 
@@ -506,21 +506,21 @@ bool ICM42688::Deinit() {
 
   /////////// Check Who Am I
   uint8_t id = 0;
-  if (!port_->ReadRegister(RegAddrNew::WHO_AM_I, &id)) {
-    printf("ICM42688::CheckWhoAmI(): error! cannot read WHO_AM_I id!\n");
+  if (!port_.ReadRegister(RegAddrNew::WHO_AM_I, &id)) {
+    printf("ICM42688::CheckWhoAmI(): error! cannot read WHO_AM_I id!\r\n");
     return false;
   }
 
   if (id != WHO_AM_I_ID) {
     printf(
-        "ICM42688::CheckWhoAmI(): error! wanted ID: 0x%02X, got: 0x%02X\n",
+        "ICM42688::CheckWhoAmI(): error! wanted ID: 0x%02X, got: 0x%02X\r\n",
         WHO_AM_I_ID, id);
     return false;
   }
 
   //Timer::SleepUs(10000);
   HAL_Delay(10);
-  if (!port_->WriteRegister(
+  if (!port_.WriteRegister(
           RegAddrNew::DEVICE_CONFIG,
           0x01)) {  // after the software reset, it is in sleep mode
     printf("ICM42688::WriteRegister Fail!");
@@ -640,22 +640,22 @@ bool ICM42688::icm4x6xx_disable_aux_pins() {
 
   reg_value = 0x01;
 
-  if (!port_->WriteRegister(static_cast<uint8_t>(0x70), reg_value)) {
+  if (!port_.WriteRegister(static_cast<uint8_t>(0x70), reg_value)) {
     return false;
   }
   reg_value = 0x01;
 
-  if (!port_->WriteRegister(static_cast<uint8_t>(0x71), reg_value)) {
+  if (!port_.WriteRegister(static_cast<uint8_t>(0x71), reg_value)) {
     return false;
   }
   reg_value = 0x01;
 
-  if (!port_->WriteRegister(static_cast<uint8_t>(0x72), reg_value)) {
+  if (!port_.WriteRegister(static_cast<uint8_t>(0x72), reg_value)) {
     return false;
   }
   reg_value = 0x01;
 
-  if (!port_->WriteRegister(static_cast<uint8_t>(0x73), reg_value)) {
+  if (!port_.WriteRegister(static_cast<uint8_t>(0x73), reg_value)) {
     return false;
   }
   if (!icm4x6xx_set_reg_bank(0)) {
@@ -732,7 +732,7 @@ bool ICM42688::icm4x6xx_config_highg_parameter() {
   reg_value = ICM4X6XX_APEX_CONFIG6_HIGHG_PEAK_TH_2844MG |
               ICM4X6XX_APEX_CONFIG6_HIGHG_TIME_TH_20MS;
 
-  if (!port_->WriteRegister(static_cast<uint8_t>(REG_APEX_CONFIG6),
+  if (!port_.WriteRegister(static_cast<uint8_t>(REG_APEX_CONFIG6),
                             reg_value)) {
     return false;
   }
@@ -753,7 +753,7 @@ bool ICM42688::icm4x6xx_config_highg_parameter() {
  *         non-zero value if failed.
  */
 bool ICM42688::icm4x6xx_set_reg_bank(uint8_t bank_num) {
-  if (!port_->WriteRegister(static_cast<uint8_t>(REG_BANK_SEL), bank_num)) {
+  if (!port_.WriteRegister(static_cast<uint8_t>(REG_BANK_SEL), bank_num)) {
     return false;
   }
   return true;
@@ -900,7 +900,7 @@ bool ICM42688::icm4x6xx_set_gyro_fsr(icm4x6xx_gyro_fsr fsr) {
 }
 
 bool ICM42688::ReadWhoAmI(uint8_t* who_am_i) {
-  return port_->ReadRegister(static_cast<uint8_t>(RegAddrNew::WHO_AM_I),
+  return port_.ReadRegister(static_cast<uint8_t>(RegAddrNew::WHO_AM_I),
                              who_am_i);
 }
 
@@ -1021,7 +1021,7 @@ bool ICM42688::icm4x6xx_en_big_endian_mode(bool enable) {
 //                             uint8_t mask) {
 //   uint8_t rw_buffer = 0;
 
-//   if (!port_->ReadRegister(reg_addr, &rw_buffer)) {
+//   if (!port_.ReadRegister(reg_addr, &rw_buffer)) {
 //     return false;
 //   }
 
@@ -1029,17 +1029,17 @@ bool ICM42688::icm4x6xx_en_big_endian_mode(bool enable) {
 //   rw_buffer = (rw_buffer & (~mask)) | (reg_value & mask);
 
 //   /* write new value to this register */
-//   if (!port_->WriteRegister(reg_addr, rw_buffer)) {
+//   if (!port_.WriteRegister(reg_addr, rw_buffer)) {
 //     return false;
 //   }
 
-//   // printf("ICM42688::ok!\n");
+//   // printf("ICM42688::ok!\r\n");
 //   return true;
 // }
 bool ICM42688::WriteMask(uint32_t reg_addr, uint8_t reg_value,
                             uint8_t mask) {
 
-  return port_->WriteMask(reg_addr,reg_value,mask);
+  return port_.WriteMask(reg_addr,reg_value,mask);
 }
 
 /**
@@ -1124,7 +1124,7 @@ bool ICM42688::icm4x6xx_get_packet_size(uint8_t* size) {
   uint8_t packet_size = 0;
   bool result = true;
 
-  // printf("desire_format_ = %d\n", desire_format_ );  //lmy_asi
+  // printf("desire_format_ = %d\r\n", desire_format_ );  //lmy_asi
 
   if (desire_format_ == ICM4X6XX_FORMAT_20_BYTES)
     packet_size = 20;
@@ -1159,7 +1159,7 @@ bool ICM42688::icm4x6xx_read_fifo_count(uint16_t* count) {
   uint8_t buff[2];
   uint16_t max_count = 0;
 
-  if (!port_->ReadRegisters(REG_FIFO_BYTE_COUNT_L, buff, 2)) {
+  if (!port_.ReadRegisters(REG_FIFO_BYTE_COUNT_L, buff, 2)) {
     return false;
   }
 
@@ -1303,7 +1303,7 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     if (need_sync_time) {
       sync_time_count_++;
       if (!icm4x6xx_enable_tmst_val(true)) {
-        printf("id[%d]: icm4x6xx_enable_tmst_val fail\n", id_);
+        printf("id[%d]: icm4x6xx_enable_tmst_val fail\r\n", id_);
         return false;
       }
     }
@@ -1327,18 +1327,18 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     uint32_t fifo_timestamp = 0;
 
     if (!icm4x6xx_get_packet_size(&packet_size)) {
-      printf("id[%d]: icm4x6xx_get_packet_size fail\n", id_);
+      printf("id[%d]: icm4x6xx_get_packet_size fail\r\n", id_);
       return false;
     }
-    // printf("icm4x6xx_get_packet_size = %d\n", packet_size);
+    // printf("icm4x6xx_get_packet_size = %d\r\n", packet_size);
     if (!icm4x6xx_read_fifo_count(&fifo_count)) {
-      printf("id[%d]: icm4x6xx_read_fifo_count fail\n", id_);
+      printf("id[%d]: icm4x6xx_read_fifo_count fail\r\n", id_);
       return false;
     }
-    // printf("fifo_count = %d\n", fifo_count);
+    // printf("fifo_count = %d\r\n", fifo_count);
 
     if (fifo_count == 0) {
-      printf("id[%d]: fifo_count = 0\n", id_);
+      printf("id[%d]: fifo_count = 0\r\n", id_);
       return false;
     }
 
@@ -1350,14 +1350,14 @@ bool ICM42688::ReadRaw(IMURawData& data) {
 
     uint8_t buf[bytes_to_read];
     if (!icm4x6xx_read_fifo_buf(buf, bytes_to_read)) {
-      printf("id[%d]: icm4x6xx_read_fifo_buf(buf, bytes_to_read) fail\n", id_);
+      printf("id[%d]: icm4x6xx_read_fifo_buf(buf, bytes_to_read) fail\r\n", id_);
       return false;
     }
 
     uint16_t packet_cnt = 0;
     uint32_t valid_buf_len = icm4x6xx_cal_valid_fifo_len(buf, bytes_to_read, &packet_cnt);
 
-    // printf("(valid_buf_len == %d || packet_cnt == %d) ok\n",
+    // printf("(valid_buf_len == %d || packet_cnt == %d) ok\r\n",
     // valid_buf_len,
     //          packet_cnt);
 
@@ -1397,17 +1397,17 @@ bool ICM42688::ReadRaw(IMURawData& data) {
 
       fifo_timestamp =
           p[index * packet_size + 0x0E] * 256 + p[index * packet_size + 0x0F];
-      // printf("ICM42688::fifo_timestamp = %d\n", fifo_timestamp);
+      // printf("ICM42688::fifo_timestamp = %d\r\n", fifo_timestamp);
     }*/
 
     if (need_sync_time) {
       if (!icm4x6xx_read_tmst_val(&intl_cnt_20b)) {
-        printf("id[%d]: icm4x6xx_read_tmst_val(&intl_cnt_20b) fail\n", id_);
+        printf("id[%d]: icm4x6xx_read_tmst_val(&intl_cnt_20b) fail\r\n", id_);
         return false;
       }
 
-      // printf("Timer::Now() = %lld\n", Timer::Now());
-      // printf("ICM42688::intl_cnt_20b = %d\n", intl_cnt_20b);
+      // printf("Timer::Now() = %lld\r\n", Timer::Now());
+      // printf("ICM42688::intl_cnt_20b = %d\r\n", intl_cnt_20b);
 
       ////////////////////////////////////
       //  uint32_t offset_before = 0;
@@ -1460,7 +1460,7 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     //            data.timestamp_us - last_odr_timestamp_, data.timestamp_us,
     //            before, (int64_t)before - (int64_t)data.timestamp_us);
     // printf("====================ICM42688::data.timestamp_us =
-    // %lld\n", data.timestamp_us);
+    // %lld\r\n", data.timestamp_us);
 
     data.temperature = (float)temperture / 2.07 + TEMPERATURE_OFFSET;
 
@@ -1488,7 +1488,7 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     data.fifo_count = packet_size * packet_cnt;
     data.packet_count = packet_cnt;
 
-    // printf("packet_cnt = %d, packet_size = %d , data.fifo_count = %d\n",
+    // printf("packet_cnt = %d, packet_size = %d , data.fifo_count = %d\r\n",
     // packet_cnt, packet_size, data.fifo_count);  //lmy_asi
 
     memcpy(data.fifo_data, p, data.fifo_count);
@@ -1507,19 +1507,19 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     // int16_t gyro[3] = {0};
 
     if (!icm4x6xx_get_packet_size(&packet_size)) {
-      printf("id[%d]: icm4x6xx_get_packet_size fail\n", id_);
+      printf("id[%d]: icm4x6xx_get_packet_size fail\r\n", id_);
       return false;
     }
 
-    // printf("icm4x6xx_get_packet_size = %d\n", packet_size);
+    // printf("icm4x6xx_get_packet_size = %d\r\n", packet_size);
     if (!icm4x6xx_read_fifo_count(&fifo_count)) {
-      printf("id[%d]: icm4x6xx_read_fifo_count fail\n", id_);
+      printf("id[%d]: icm4x6xx_read_fifo_count fail\r\n", id_);
       return false;
     }
-    // printf("fifo_count = %d\n", fifo_count);
+    // printf("fifo_count = %d\r\n", fifo_count);
 
     if (fifo_count == 0) {
-      // printf("id[%d]: fifo_count == 0\n", id_);
+      // printf("id[%d]: fifo_count == 0\r\n", id_);
       return false;
     }
 
@@ -1539,7 +1539,7 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     uint32_t valid_buf_len =
         icm4x6xx_cal_valid_fifo_len(buf, bytes_to_read, &packet_cnt);
 
-    // printf("(valid_buf_len == %d || packet_cnt == %d) ok\n",
+    // printf("(valid_buf_len == %d || packet_cnt == %d) ok\r\n",
     // valid_buf_len,
     //          packet_cnt);
 
@@ -1574,7 +1574,7 @@ bool ICM42688::ReadRaw(IMURawData& data) {
 
       fifo_timestamp =
           p[index * packet_size + 0x0E] * 256 + p[index * packet_size + 0x0F];
-      // printf("ICM42688::fifo_timestamp = %d\n", fifo_timestamp);
+      // printf("ICM42688::fifo_timestamp = %d\r\n", fifo_timestamp);
     }*/
 
     // uint64_t before = dsp_time - 2700 - (odr_time_offset_before);
@@ -1583,7 +1583,7 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     //            data.timestamp_us - last_odr_timestamp_, data.timestamp_us,
     //            before, (int64_t)before - (int64_t)data.timestamp_us);
     // printf("====================ICM42688::data.timestamp_us =
-    // %lld\n", data.timestamp_us);
+    // %lld\r\n", data.timestamp_us);
 
     data.accel[0] = accel[0] * ACCEL_SCALER;
     data.accel[1] = accel[1] * ACCEL_SCALER;
@@ -1608,7 +1608,7 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     data.fifo_count = packet_size * packet_cnt;
     data.packet_count = packet_cnt;
 
-    // printf("packet_cnt = %d, packet_size = %d , data.fifo_count = %d\n",
+    // printf("packet_cnt = %d, packet_size = %d , data.fifo_count = %d\r\n",
     // packet_cnt, packet_size, data.fifo_count);  //lmy_asi
 
     memcpy(data.fifo_data, p, data.fifo_count);
@@ -1644,7 +1644,7 @@ int ICM42688::ReadTemp(int16_t& temp_raw_data) {
 }
 
 bool ICM42688::WriteByte(uint8_t reg, uint8_t val) {
-  if (!port_->WriteRegister(static_cast<uint8_t>(reg), val)) {
+  if (!port_.WriteRegister(static_cast<uint8_t>(reg), val)) {
     return false;
   }
   //Timer::SleepMs(5);
@@ -1653,7 +1653,7 @@ bool ICM42688::WriteByte(uint8_t reg, uint8_t val) {
 }
 
 bool ICM42688::ReadBlock(uint8_t first_reg, uint8_t buf[], int len) {
-  if (!port_->ReadRegisters(static_cast<uint8_t>(first_reg), buf, len)) {
+  if (!port_.ReadRegisters(static_cast<uint8_t>(first_reg), buf, len)) {
     return false;
   }
 
@@ -1788,7 +1788,7 @@ bool ICM42688::icm4x6xx_set_gyro_odr(float odr) {
  *         non-zero value if failed.
  */
 bool ICM42688::icm4x6xx_read_int_status(uint8_t* status) {
-  if (!port_->ReadRegister(REG_INT_STATUS, status)) {
+  if (!port_.ReadRegister(REG_INT_STATUS, status)) {
     return false;
   }
 
@@ -1805,7 +1805,7 @@ bool ICM42688::icm4x6xx_read_int_status(uint8_t* status) {
  *         non-zero value if failed.
  */
 bool ICM42688::icm4x6xx_read_int_status2(uint8_t* status) {
-  if (!port_->ReadRegister(REG_INT_STATUS2, status)) {
+  if (!port_.ReadRegister(REG_INT_STATUS2, status)) {
     return false;
   }
 
