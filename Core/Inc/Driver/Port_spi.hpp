@@ -11,6 +11,10 @@ class port_spi {
   bool WriteMask(uint8_t reg_addr, uint8_t reg_value, uint8_t mask);
   bool ReadBlock(uint8_t first_reg, uint8_t buf[], int len);
 
+  bool WriteRegister(uint8_t addr, uint8_t data);
+  bool ReadRegister(uint8_t addr, uint8_t* data);
+  bool ReadRegisters(uint8_t addr, uint8_t* data, int len);
+
   SPI_HandleTypeDef spi_Handle;
 
  private:

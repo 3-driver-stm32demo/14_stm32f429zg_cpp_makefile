@@ -1,13 +1,14 @@
 #pragma once
 
 #include <stdint.h>
+#include "stdio.h"
+#include "Driver/Port_spi.hpp"
+// #include <cmath>
+// //#include <device/GPIO.hpp>
+// #include <device/SPI.hpp>
+// #include <device/Scheduler.hpp>
 
-#include <cmath>
-//#include <device/GPIO.hpp>
-#include <device/SPI.hpp>
-#include <device/Scheduler.hpp>
-
-#include "imu/IMU.hpp"
+// #include "imu/IMU.hpp"
 
 /*
 * [HAVANA/YOKOHAMA] Disable aux pads(pin10&pin11) which are typically connected
@@ -880,7 +881,43 @@ typedef enum icm4x6xx_fifo_format {
 #define FIFO_HEADER_G_BIT (0x20)
 #define FIFO_HEADER_20_BIT (0x10)
 
-class ICM42688 : public IMU {
+struct IMURawData {
+  uint32_t id;
+  uint8_t index;
+  int16_t raw_accel[3];
+  int16_t raw_gyro[3];
+  int16_t raw_temp;
+  uint64_t timestamp_us;
+  static constexpr uint16_t PACKET_SIZE = 16;
+  static constexpr uint16_t MAX_PACKET_COUNT = 24;
+  uint8_t fifo_data[PACKET_SIZE * MAX_PACKET_COUNT];
+  uint16_t fifo_count = 0;
+  uint16_t packet_count = 0;
+  float accel[3];
+  float gyro[3];
+  float temperature;
+  bool is_need_cali_time;
+  bool is_use_chip_fifo_time;
+  uint16_t chip_cali_fifo_timestamp;
+  bool vaild;
+};
+
+struct IMUData {
+  uint32_t id;
+  uint8_t index;
+  int16_t raw_accel[3];
+  int16_t raw_gyro[3];
+  int16_t raw_temp;
+  uint64_t timestamp_us;
+  float accel[3];
+  float gyro[3];
+  float temperature;
+  float accel_calib[3];
+  float gyro_calib[3];
+};
+
+
+class ICM42688{
  public:
   ICM42688(int id);
 
@@ -892,7 +929,7 @@ class ICM42688 : public IMU {
   int DebugInit(bool clkin_enable);
 
   // choose different config parameters group
-  int DebugInit(ConfigGroup group_Id);
+  //int DebugInit(ConfigGroup group_Id);
   bool Deinit();
   bool Read(IMUData &data);
   bool ReadRaw(IMURawData &data);
@@ -903,7 +940,7 @@ class ICM42688 : public IMU {
   int ReadTemp(int16_t &temp_raw_data);
   bool WriteByte(uint8_t reg, uint8_t val);
   bool ReadBlock(uint8_t first_reg, uint8_t buf[], int len);
-  void ExecutePeriodically();
+  //void ExecutePeriodically();
 
  public:
   static constexpr uint8_t WHO_AM_I_ID = 0x47;
@@ -912,7 +949,9 @@ class ICM42688 : public IMU {
   bool Init();
 
  protected:
-  Device *port_ = nullptr;
+  //Device *port_ = nullptr;
+  port_spi *port_ = nullptr;
+
   bool WriteMask(uint32_t reg_addr, uint8_t reg_value, uint8_t mask);
 
   bool icm4x6xx_disable_aux_pins();
@@ -1035,8 +1074,8 @@ class ICM42688 : public IMU {
   int id_;
   uint64_t err_cnt_ = 0;
   int notify_id_;
-  IMURawData internal_raw_data_;
-  IMUData internal_data_;
+  // IMURawData internal_raw_data_;
+  // IMUData internal_data_;
   icm4x6xx_gyro_fsr gyro_fsr_;
   icm4x6xx_accel_fsr accel_fsr_;
   uint8_t a_res_idx_;

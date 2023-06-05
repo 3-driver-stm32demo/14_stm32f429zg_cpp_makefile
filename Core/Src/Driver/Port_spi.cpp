@@ -133,3 +133,12 @@ bool port_spi::WriteMask(uint8_t reg_addr, uint8_t reg_value, uint8_t mask) {
   }
   return true;
 }
+
+bool port_spi::ReadRegister(uint8_t addr, uint8_t* data) { return SPI_ReadOneRegister(addr, data); }
+
+bool port_spi::WriteRegister(uint8_t addr, uint8_t data) { return SPI_WriteOneRegister(addr, data); }
+
+bool port_spi::ReadRegisters(uint8_t addr, uint8_t* data, int len)
+{
+    return ReadBlock(addr,data,len);
+}
