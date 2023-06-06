@@ -1511,15 +1511,15 @@ bool ICM42688::ReadRaw(IMURawData& data) {
       return false;
     }
 
-    // printf("icm4x6xx_get_packet_size = %d\r\n", packet_size);
+    printf("icm4x6xx_get_packet_size = %d\r\n", packet_size);
     if (!icm4x6xx_read_fifo_count(&fifo_count)) {
       printf("id[%d]: icm4x6xx_read_fifo_count fail\r\n", id_);
       return false;
     }
-    // printf("fifo_count = %d\r\n", fifo_count);
+    printf("fifo_count = %d\r\n", fifo_count);
 
     if (fifo_count == 0) {
-      // printf("id[%d]: fifo_count == 0\r\n", id_);
+      printf("id[%d]: fifo_count == 0\r\n", id_);
       return false;
     }
 
@@ -1536,12 +1536,9 @@ bool ICM42688::ReadRaw(IMURawData& data) {
     }
 
     uint16_t packet_cnt = 0;
-    uint32_t valid_buf_len =
-        icm4x6xx_cal_valid_fifo_len(buf, bytes_to_read, &packet_cnt);
+    uint32_t valid_buf_len = icm4x6xx_cal_valid_fifo_len(buf, bytes_to_read, &packet_cnt);
 
-    // printf("(valid_buf_len == %d || packet_cnt == %d) ok\r\n",
-    // valid_buf_len,
-    //          packet_cnt);
+    printf("(valid_buf_len == %d || packet_cnt == %d) ok\r\n", valid_buf_len, packet_cnt);
 
     // ICM4X6XX_INST_PRINTF(LOW, instance, "valid buf_len/packet_cnt %d %d",
     // valid_buf_len, packet_cnt);

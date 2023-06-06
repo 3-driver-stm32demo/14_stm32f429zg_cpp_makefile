@@ -1,6 +1,7 @@
 
 #pragma once
 #include "Driver/ICM42688.hpp"
+#include "UserApp/tool.hpp"
 
 namespace deval {
 
@@ -64,6 +65,9 @@ class IMUService {
         // read success
         data_pack_.imu0.id = 0x47;
         data_pack_.imu0.vaild = true;
+        py_f2s4printf(printf_buf,data_pack_.imu0.accel[0],sizeof(data_pack_.imu0.accel[0]));
+        printf("%s\r\n",printf_buf);
+        //printf();
       }
       HAL_Delay(1);
     }
@@ -75,6 +79,7 @@ class IMUService {
   bool imu0_rdy_ = false;
   mtDataPack data_pack_{};
   drvf::ICM42688 mainboard_imu_;
+  char printf_buf[250];
 };
 
 }  // namespace deval
