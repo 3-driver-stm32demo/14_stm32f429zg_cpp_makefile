@@ -1511,12 +1511,12 @@ bool ICM42688::ReadRaw(IMURawData& data) {
       return false;
     }
 
-    printf("icm4x6xx_get_packet_size = %d\r\n", packet_size);
+    //printf("icm4x6xx_get_packet_size = %d\r\n", packet_size);
     if (!icm4x6xx_read_fifo_count(&fifo_count)) {
       printf("id[%d]: icm4x6xx_read_fifo_count fail\r\n", id_);
       return false;
     }
-    printf("fifo_count = %d\r\n", fifo_count);
+    //printf("fifo_count = %d\r\n", fifo_count);
 
     if (fifo_count == 0) {
       printf("id[%d]: fifo_count == 0\r\n", id_);

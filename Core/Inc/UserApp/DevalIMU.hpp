@@ -2,6 +2,8 @@
 #pragma once
 #include "Driver/ICM42688.hpp"
 #include "UserApp/tool.hpp"
+#include <iostream>
+#include <string>
 
 namespace deval {
 
@@ -51,6 +53,8 @@ class IMUService {
   }
 
   void Loop() {
+    uint32_t timestamp_us_last =0 ;
+    uint32_t timestamp_us_snap =0 ;
     while (running_) {
       data_pack_.imu0.id = 0x00;
       data_pack_.imu0.vaild = false;
@@ -65,11 +69,16 @@ class IMUService {
         // read success
         data_pack_.imu0.id = 0x47;
         data_pack_.imu0.vaild = true;
-        py_f2s4printf(printf_buf,data_pack_.imu0.accel[0],sizeof(data_pack_.imu0.accel[0]));
-        printf("%s\r\n",printf_buf);
+        // py_f2s4printf(printf_buf,data_pack_.imu0.accel[0],sizeof(data_pack_.imu0.accel[0]));
+        // printf("%s\r\n",printf_buf);
+        // py_f2s4printf(printf_buf,data_pack_.imu0.timestamp_us,sizeof(data_pack_.imu0.timestamp_us));
+        timestamp_us_snap = data_pack_.imu0.timestamp_us-timestamp_us_last;
+        std::string int_to_string = std::to_string(timestamp_us_snap); 
+        printf("read snap is %s\r\n", int_to_string.c_str());
+        timestamp_us_last = data_pack_.imu0.timestamp_us;
         //printf();
       }
-      HAL_Delay(1);
+      //HAL_Delay(0);
     }
   }
 
