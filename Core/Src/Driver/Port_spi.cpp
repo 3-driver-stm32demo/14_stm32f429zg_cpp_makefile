@@ -111,6 +111,38 @@ int port_spi::SPI_ReadMultRegister(uint8_t addr, uint8_t* buf, uint16_t len) {
   return 0;
 }
 
+// int port_spi::SPI_WriteMultRegister(uint8_t addr, uint8_t* data, uint16_t len) {
+//   if (data == NULL) {
+//     return -1;
+//   }
+//   uint8_t tx_buf[len+1];
+//   memset0(tx_buf, 0, len+1);
+//   tx_buf[0] = addr&0x7F;
+//   for(uint8_t i = 1 ; i< len+1;i++)
+//   {
+//       tx_buf[i] = data[i-1];
+//   }
+//   SPI5_CS = 0;
+//   HAL_SPI_Transmit(&spi_Handle, tx_buf, len+1, 1000);  
+//   SPI5_CS = 1;
+//   return 0;
+// }
+
+int port_spi::SPI_WriteMultRegister(uint8_t addr, uint8_t* data, uint16_t len) {
+  if (data == NULL) {
+    return -1;
+  }
+  uint8_t rx_buf[len];
+  uint8_t add = addr&0x7F; 
+  memset0(rx_buf, 0, len);
+  SPI5_CS = 0;
+  HAL_SPI_Transmit(&spi_Handle, &add, 1, 1000);
+  HAL_SPI_TransmitReceive(&spi_Handle, data, rx_buf, len, 1000);
+  SPI5_CS = 1;
+  return 0;
+}
+
+
 bool port_spi::ReadBlock(uint8_t first_reg, uint8_t buf[], int len) {
   if (SPI_ReadMultRegister(first_reg, buf, len)) {
     return false;

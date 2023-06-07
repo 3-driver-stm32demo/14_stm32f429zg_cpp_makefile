@@ -15,13 +15,15 @@ class port_spi {
   bool ReadRegister(uint8_t addr, uint8_t* data);
   bool ReadRegisters(uint8_t addr, uint8_t* data, int len);
 
+  int SPI_ReadMultRegister(uint8_t addr, uint8_t* buf, uint16_t len);
+  int SPI_WriteMultRegister(uint8_t addr, uint8_t* data, uint16_t len);
+
   SPI_HandleTypeDef spi_Handle;
 
  private:
   int SPI_ReadWriteByte(uint8_t TxData, uint8_t* Rxdata);
   int SPI_ReadOneRegister(uint8_t addr, uint8_t* data);
   int SPI_WriteOneRegister(uint8_t addr, uint8_t data);
-  int SPI_ReadMultRegister(uint8_t addr, uint8_t* buf, uint16_t len);
 };
 
 #endif

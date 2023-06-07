@@ -8,7 +8,7 @@
 // #include <device/SPI.hpp>
 // #include <device/Scheduler.hpp>
 
-// #include "imu/IMU.hpp"
+// #include "Sensor/icm42670/imu/IMU.hpp"
 
 /*
 * [HAVANA/YOKOHAMA] Disable aux pads(pin10&pin11) which are typically connected
