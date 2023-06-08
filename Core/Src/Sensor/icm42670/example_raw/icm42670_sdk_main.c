@@ -97,8 +97,8 @@ int icm42670_sdk_main_init(void)
 	rc |= setup_mcu(&icm_serif);
 	rc |= setup_imu_device(&icm_serif);
 	rc |= configure_imu_device();
-	check_rc(rc, "error during initialization");
-	printf("IMU device successfully initialized");
+	check_rc(rc, "error during initialization\r\n");
+	printf("IMU device successfully initialized\r\n");
 
 	// do {
 	// 	/* Poll device for data */
@@ -118,6 +118,7 @@ int icm42670_sdk_main_data_read(void)
 {
 	int rc = 0;
 	rc = get_imu_data();
+	check_rc(rc, "error while getting data");
 	return rc;
 }	
 

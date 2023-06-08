@@ -749,7 +749,8 @@ int inv_imu_get_data_from_fifo(struct inv_imu_device *s)
 		return status;
 
 	if ((int_status & INT_STATUS_FIFO_THS_INT_MASK) ||
-	    (int_status & INT_STATUS_FIFO_FULL_INT_MASK)) {
+	    (int_status & INT_STATUS_FIFO_FULL_INT_MASK)||
+		 int_status & INT_STATUS_PLL_RDY_INT_MASK) {
 		uint8_t data[2];
 
 		/*
@@ -1387,33 +1388,33 @@ static int init_hardware_from_ui(struct inv_imu_device *s)
 	/* Set default timestamp resolution 16us (Mobile use cases) */
 	status |= inv_imu_set_timestamp_resolution(s, TMST_CONFIG1_RESOL_16us);
 
-	/* Enable push pull on INT1 to avoid moving in Test Mode after a soft reset */
-	status |= inv_imu_read_reg(s, INT_CONFIG, 1, &value);
-	value &= ~INT_CONFIG_INT1_DRIVE_CIRCUIT_MASK;
-	value |= (uint8_t)INT_CONFIG_INT1_DRIVE_CIRCUIT_PP;
-	status |= inv_imu_write_reg(s, INT_CONFIG, 1, &value);
+	// /* Enable push pull on INT1 to avoid moving in Test Mode after a soft reset */
+	// status |= inv_imu_read_reg(s, INT_CONFIG, 1, &value);
+	// value &= ~INT_CONFIG_INT1_DRIVE_CIRCUIT_MASK;
+	// value |= (uint8_t)INT_CONFIG_INT1_DRIVE_CIRCUIT_PP;
+	// status |= inv_imu_write_reg(s, INT_CONFIG, 1, &value);
 
-	/* Configure the INT1 interrupt pulse as active high */
-	status |= inv_imu_read_reg(s, INT_CONFIG, 1, &value);
-	value &= ~INT_CONFIG_INT1_POLARITY_MASK;
-	value |= (uint8_t)INT_CONFIG_INT1_POLARITY_HIGH;
-	status |= inv_imu_write_reg(s, INT_CONFIG, 1, &value);
+	// /* Configure the INT1 interrupt pulse as active high */
+	// status |= inv_imu_read_reg(s, INT_CONFIG, 1, &value);
+	// value &= ~INT_CONFIG_INT1_POLARITY_MASK;
+	// value |= (uint8_t)INT_CONFIG_INT1_POLARITY_HIGH;
+	// status |= inv_imu_write_reg(s, INT_CONFIG, 1, &value);
 
-	/* Set interrupt config */
-	config_int.INV_UI_FSYNC      = INV_IMU_DISABLE;
-	config_int.INV_UI_DRDY       = INV_IMU_DISABLE;
-	config_int.INV_FIFO_THS      = INV_IMU_ENABLE;
-	config_int.INV_FIFO_FULL     = INV_IMU_DISABLE;
-	config_int.INV_SMD           = INV_IMU_ENABLE;
-	config_int.INV_WOM_X         = INV_IMU_ENABLE;
-	config_int.INV_WOM_Y         = INV_IMU_ENABLE;
-	config_int.INV_WOM_Z         = INV_IMU_ENABLE;
-	config_int.INV_FF            = INV_IMU_ENABLE;
-	config_int.INV_LOWG          = INV_IMU_ENABLE;
-	config_int.INV_STEP_DET      = INV_IMU_ENABLE;
-	config_int.INV_STEP_CNT_OVFL = INV_IMU_ENABLE;
-	config_int.INV_TILT_DET      = INV_IMU_ENABLE;
-	status |= inv_imu_set_config_int1(s, &config_int);
+	// /* Set interrupt config */
+	// config_int.INV_UI_FSYNC      = INV_IMU_DISABLE;
+	// config_int.INV_UI_DRDY       = INV_IMU_ENABLE;
+	// config_int.INV_FIFO_THS      = INV_IMU_DISABLE;
+	// config_int.INV_FIFO_FULL     = INV_IMU_DISABLE;
+	// config_int.INV_SMD           = INV_IMU_ENABLE;
+	// config_int.INV_WOM_X         = INV_IMU_ENABLE;
+	// config_int.INV_WOM_Y         = INV_IMU_ENABLE;
+	// config_int.INV_WOM_Z         = INV_IMU_ENABLE;
+	// config_int.INV_FF            = INV_IMU_ENABLE;
+	// config_int.INV_LOWG          = INV_IMU_ENABLE;
+	// config_int.INV_STEP_DET      = INV_IMU_ENABLE;
+	// config_int.INV_STEP_CNT_OVFL = INV_IMU_ENABLE;
+	// config_int.INV_TILT_DET      = INV_IMU_ENABLE;
+	// status |= inv_imu_set_config_int1(s, &config_int);
 
 	/* Enable FIFO: use 16-bit format by default (i.e. high res is disabled) */
 	status |= inv_imu_configure_fifo(s, INV_IMU_FIFO_ENABLED);

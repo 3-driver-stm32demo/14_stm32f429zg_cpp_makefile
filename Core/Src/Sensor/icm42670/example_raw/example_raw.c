@@ -279,23 +279,26 @@ void imu_callback(inv_imu_sensor_event_t *event)
 	 */
 	if (event->sensor_mask & (1 << INV_SENSOR_ACCEL) && event->sensor_mask & (1 << INV_SENSOR_GYRO))
 	{
-
-	}
+		printf("gyro %d %d %d\r\n",gyro[0],gyro[1],gyro[2]);
+		printf("accel %d %d %d\r\n",accel[0],accel[1],accel[2]);
 		// printf("%u: %.3f, %.3f, %.3f, %.3f, %.3f, %.3f, %.3f",
 		//         (uint32_t)timestamp, accel_g[0], accel_g[1], accel_g[2], temp_degc, gyro_dps[0],
 		//         gyro_dps[1], gyro_dps[2]);
+	}
 	else if (event->sensor_mask & (1 << INV_SENSOR_GYRO))
 	{
-
+		printf("gyro %d %d %d\r\n",gyro[0],gyro[1],gyro[2]);
+	 // printf("%u: NA, NA, NA, %.3f, %.3f, %.3f, %.3f", (uint32_t)timestamp,
+	 //         temp_degc, gyro_dps[0], gyro_dps[1], gyro_dps[2]);
 	}
-		// printf("%u: NA, NA, NA, %.3f, %.3f, %.3f, %.3f", (uint32_t)timestamp,
-		//         temp_degc, gyro_dps[0], gyro_dps[1], gyro_dps[2]);
+
 	else if (event->sensor_mask & (1 << INV_SENSOR_ACCEL))
 	{
-
+		printf("accel %d %d %d\r\n",accel[0],accel[1],accel[2]);
+	 // printf("%u: %.3f, %.3f, %.3f, %.3f, NA, NA, NA", (uint32_t)timestamp,
+     //         accel_g[0], accel_g[1], accel_g[2], temp_degc);
 	}
-		// printf("%u: %.3f, %.3f, %.3f, %.3f, NA, NA, NA", (uint32_t)timestamp,
-		//         accel_g[0], accel_g[1], accel_g[2], temp_degc);
+
 #else
 
 	/*

@@ -33,7 +33,7 @@ void icm42670::read_data_loop(void)
 {
     while (1)
     {
-        HAL_Delay(1000);
+        HAL_Delay(10);
         icm42670_sdk_main_data_read();
     }
 }
